@@ -109,10 +109,13 @@ input.err{border:2px solid var(--red)!important}
 const API_URL = 'https://script.google.com/macros/s/AKfycbyE-c4F4yWJECH9HqviZgpG9GTtBq3D7XLBdZaCcnSyHRomwFLOljNGAuUW6F9mD3Tu/exec';
 let TOKEN = '';
 try { TOKEN = localStorage.getItem('finanzas_token') || ''; } catch (e) {}
+// El token también puede venir en el link (?k=...), que es lo que guarda el ícono del iPhone
+const tokenEnLink = new URLSearchParams(location.search).get('k') || (location.hash.match(/k=([^&]+)/) || [])[1];
+if (tokenEnLink) { TOKEN = tokenEnLink; try { localStorage.setItem('finanzas_token', TOKEN); } catch (e) {} }
 const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const MES_CORTO = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 const DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-const CUENTAS = ['Santander','Wise','Revolut'];
+const CUENTAS = ['Revolut','Santander','Wise'];
 const COLOR_CUENTA = {Santander:'#C8352B', Wise:'#3F8F2A', Revolut:'#15171C'};
 
 const S = {
@@ -383,7 +386,7 @@ function viewMovs(){
 
 /* ---------- FORMULARIO DE MOVIMIENTO ---------- */
 function nuevoMov(){
-  S.form = { id:'', tipo:'Gasto', monto:'', comercio:'', fecha:S.data.hoy, cuenta:'Santander', categoria:'', comentario:'',
+  S.form = { id:'', tipo:'Gasto', monto:'', comercio:'', fecha:S.data.hoy, cuenta:'Revolut', categoria:'', comentario:'',
              compartido:false, personas:[], tu_parte:'', en_tricount:false, parteManual:false, origen:'Manual' };
   go('form');
 }
@@ -549,7 +552,7 @@ function viewRecs(){
   <button class="btn dashed" onclick="nuevoRec()">+ Agregar recurrente</button>`;
 }
 function nuevoRec(){
-  S.recForm = { id:'', nombre:'', tipo:'Gasto', monto:'', dia:'', cuenta:'Santander', categoria:'Suscripciones', variable:false, activo:true, desde:S.data.hoy.slice(0,7), hasta:'', notas:'' };
+  S.recForm = { id:'', nombre:'', tipo:'Gasto', monto:'', dia:'', cuenta:'Revolut', categoria:'Suscripciones', variable:false, activo:true, desde:S.data.hoy.slice(0,7), hasta:'', notas:'' };
   go('recForm');
 }
 function editarRec(id){
